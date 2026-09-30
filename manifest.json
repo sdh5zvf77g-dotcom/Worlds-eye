@@ -1,14 +1,15 @@
 {
   "name": "World's Eye",
   "short_name": "World's Eye",
-  "description": "Search any place and open free live cameras worldwide.",
+  "description": "Discover public live cameras around the world. Search webcams, explore the map, save favourites and watch supported streams.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#070b10",
-  "theme_color": "#070b10",
+  "background_color": "#070b12",
+  "theme_color": "#070b12",
   "lang": "en",
+  "categories": ["travel", "navigation", "entertainment"],
   "icons": [
     {
       "src": "./icons/icon-192.png",

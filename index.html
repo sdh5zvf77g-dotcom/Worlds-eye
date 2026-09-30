@@ -1,49 +1,1271 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>World's Eye — Explore the world live</title><meta name="description" content="Discover public live cameras around the world. Search webcams, explore the map, save favourites and watch supported streams."><meta name="theme-color" content="#080d16"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="World's Eye"><link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="icons/icon-180.png"><link rel="icon" href="icons/favicon.ico">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=5">
+<title>World's Eye — Explore the world live</title>
+<meta name="description" content="Discover public live cameras around the world. Search webcams, explore the map, save favourites and watch supported streams.">
+<meta name="theme-color" content="#070b12">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="World's Eye">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
 <style>
-:root{color-scheme:dark;--bg:#080d16;--panel:#101927;--panel2:#162235;--line:#26364b;--txt:#eef5ff;--muted:#91a2bb;--blue:#68a7ff;--cyan:#63e4d0;--purple:#b7a0ff;--radius:18px}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 15% -10%,#182b48 0,transparent 36%),var(--bg);color:var(--txt);font-family:'DM Sans',system-ui,sans-serif;line-height:1.45}button,input,select{font:inherit}button,a{ -webkit-tap-highlight-color:transparent}button{cursor:pointer;color:inherit}.topbar{position:sticky;top:0;z-index:500;background:#080d16eF;backdrop-filter:blur(18px);border-bottom:1px solid var(--line);padding:10px max(14px,env(safe-area-inset-left))}.topinner{max-width:1400px;margin:auto;display:flex;align-items:center;gap:16px}.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.04em;font-size:1.12rem;white-space:nowrap}.brand img{width:38px;height:38px;border-radius:12px}.brand small{display:block;font-size:.62rem;letter-spacing:.12em;color:var(--muted);font-weight:600}.topsearch{display:flex;gap:8px;flex:1;max-width:720px;margin:auto}.topsearch input{min-width:0;flex:1;background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:12px 15px;color:var(--txt);outline:none}.topsearch input:focus{border-color:var(--blue)}.btn{border:1px solid var(--line);background:var(--panel2);padding:10px 14px;border-radius:12px;font-weight:700}.btn.primary{background:linear-gradient(120deg,#3e8bff,#7267ee);border:0;color:white}.btn:hover,.navbtn:hover{filter:brightness(1.15)}main{max-width:1400px;margin:auto;padding:24px 18px 100px}.hero{display:flex;justify-content:space-between;align-items:end;gap:20px;margin:12px 0 22px}.eyebrow{font-size:.72rem;letter-spacing:.17em;color:var(--cyan);font-weight:800;text-transform:uppercase}.hero h1{font-size:clamp(1.8rem,4vw,3.25rem);line-height:1.08;letter-spacing:-.055em;margin:8px 0}.hero h1 span{background:linear-gradient(90deg,#76b5ff,#b5a3ff,#65e4d1);color:transparent;background-clip:text}.hero p{color:var(--muted);margin:0;max-width:680px}.hero-actions{display:flex;gap:8px;flex-wrap:wrap}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:20px}.stat{background:linear-gradient(145deg,#142238,#0e1725);border:1px solid var(--line);border-radius:16px;padding:16px;min-width:0}.stat .label{color:var(--muted);font-size:.77rem}.stat strong{display:block;font-size:1.6rem;letter-spacing:-.04em;margin:3px 0}.stat .hint{font-size:.72rem;color:#80d9ca}.layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(280px,.8fr);gap:16px;align-items:start}.panel{background:linear-gradient(155deg,#111b2a,#0d1521);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}.panelhead{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:16px 17px;border-bottom:1px solid var(--line)}.panelhead h2{font-size:1rem;margin:0}.panelhead p{color:var(--muted);font-size:.77rem;margin:3px 0 0}.mapwrap{position:relative}.maptools{position:absolute;z-index:400;top:12px;right:12px;display:flex;gap:6px}.maptools button{background:#101927ed;border:1px solid #40516a;border-radius:10px;padding:7px 10px;font-size:.75rem}.map{height:390px;background:#0c1522}.leaflet-container{background:#0c1522;font:12px 'DM Sans',sans-serif}.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#111d2d;color:#eef5ff}.leaflet-popup-content a{color:#80b8ff}.mapcaption{padding:10px 14px;color:var(--muted);font-size:.74rem;border-top:1px solid var(--line)}.sidecol{display:flex;flex-direction:column;gap:16px}.category-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;padding:13px}.cat{border:1px solid var(--line);border-radius:13px;background:var(--panel);padding:13px 11px;text-align:left;min-height:78px;display:flex;gap:10px;align-items:center}.cat .emoji{font-size:1.4rem}.cat strong{display:block;font-size:.83rem}.cat small{color:var(--muted);font-size:.7rem}.cat.active{border-color:var(--blue);background:#183052}.directory-list{padding:10px 13px;display:grid;gap:8px}.directory{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 12px;border:1px solid var(--line);border-radius:12px;text-decoration:none;color:var(--txt);background:#121d2c}.directory small{display:block;color:var(--muted);font-size:.73rem;margin-top:2px}.arrow{color:var(--blue)}.sectionbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:26px 0 12px}.sectionbar h2{margin:0;font-size:1.25rem;letter-spacing:-.03em}.sectionbar p{margin:4px 0 0;color:var(--muted);font-size:.8rem}.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:13px}.filters input,.filters select{background:var(--panel);border:1px solid var(--line);color:var(--txt);border-radius:11px;padding:10px 12px;min-width:0}.filters input{flex:1;min-width:180px}.filters select{max-width:180px}.results-meta{color:var(--muted);font-size:.78rem;margin-bottom:12px}.camera-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.camcard{min-width:0;background:linear-gradient(145deg,#121e2e,#0e1724);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:9px}.camtop{display:flex;justify-content:space-between;gap:8px;align-items:start}.camicon{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#1d4672,#28254c);display:grid;place-items:center;font-size:1.2rem;flex-shrink:0}.camtitle{font-size:.9rem;font-weight:700;line-height:1.35;overflow-wrap:anywhere}.camloc{font-size:.75rem;color:var(--muted);margin-top:4px}.tags{display:flex;gap:5px;flex-wrap:wrap}.tag{font-size:.67rem;border:1px solid #30435c;background:#16263a;color:#b9d8ff;border-radius:999px;padding:3px 7px}.tag.stream{color:#8ae5cb;background:#10332f;border-color:#235b50}.camactions{display:flex;gap:7px;margin-top:auto}.camactions button,.camactions a{flex:1;text-align:center;text-decoration:none;border:1px solid var(--line);border-radius:10px;background:var(--panel2);padding:9px 7px;font-size:.76rem;font-weight:700}.camactions .watch{background:#367fea;border-color:#367fea;color:white}.camactions .save.saved{color:#ffcf6c;border-color:#8c6b32}.empty{padding:34px 15px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:15px;grid-column:1/-1}.empty strong{display:block;color:var(--txt);margin-bottom:5px}.notice{margin-top:20px;border:1px solid #34455c;background:#101b2a;border-radius:15px;padding:14px 16px;color:var(--muted);font-size:.79rem}.notice strong{color:var(--txt)}footer{padding:24px 16px;text-align:center;color:var(--muted);font-size:.75rem;border-top:1px solid var(--line)}.bottomnav{display:none}.modal{position:fixed;inset:0;z-index:1000;background:#02050bd9;display:none;align-items:center;justify-content:center;padding:18px}.modal.open{display:flex}.modalbox{width:min(950px,100%);max-height:95dvh;overflow:auto;background:#101927;border:1px solid #3a4d66;border-radius:20px;box-shadow:0 25px 100px #0009}.modalhead{display:flex;align-items:center;justify-content:space-between;padding:14px 17px;border-bottom:1px solid var(--line);gap:10px}.modalhead h2{font-size:1rem;margin:0}.close{font-size:1.3rem;border:1px solid var(--line);border-radius:10px;background:var(--panel2);width:38px;height:38px}.player{aspect-ratio:16/9;background:#03070c;display:grid;place-items:center}.player video,.player iframe{width:100%;height:100%;border:0;background:#03070c}.playernote{padding:15px;color:var(--muted);font-size:.82rem}.playernote a{color:#8fc1ff}.hide{display:none!important}
-@media(max-width:950px){.layout{grid-template-columns:1fr}.sidecol{display:grid;grid-template-columns:1fr 1fr}.camera-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.map{height:340px}}
-@media(max-width:600px){.topbar{padding:8px 12px}.topinner{gap:10px;flex-wrap:wrap}.brand img{width:34px;height:34px}.topsearch{order:2;flex-basis:100%;max-width:none}.topsearch input{padding:11px 12px}.topsearch .geo-btn{display:none}.topsearch .btn{padding:9px 12px}main{padding:18px 12px 100px}.hero{display:block;margin:8px 0 18px}.hero-actions{margin-top:13px}.stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.stat{padding:12px}.stat strong{font-size:1.35rem}.sidecol{grid-template-columns:1fr}.map{height:290px}.maptools{top:8px;right:8px}.camera-grid{grid-template-columns:1fr 1fr;gap:8px}.camcard{padding:11px;border-radius:14px}.camicon{width:34px;height:34px}.camtitle{font-size:.82rem}.camactions{flex-direction:column}.camactions button,.camactions a{padding:8px}.sectionbar{align-items:start}.filters select{flex:1;max-width:none}.bottomnav{position:fixed;bottom:0;left:0;right:0;z-index:600;display:flex;justify-content:space-around;background:#0a111df2;backdrop-filter:blur(15px);border-top:1px solid var(--line);padding:8px 5px max(8px,env(safe-area-inset-bottom))}.navbtn{background:none;border:0;color:var(--muted);font-size:.67rem;display:grid;justify-items:center;gap:3px;min-width:58px}.navbtn span{font-size:1.15rem}.navbtn.active{color:#8abaff}.filters input{min-width:100%;flex-basis:100%}.category-grid{gap:7px;padding:10px}.cat{padding:10px 8px;min-height:70px}.notice{font-size:.75rem}}
-@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
-</style></head><body>
-<header class="topbar"><div class="topinner"><div class="brand"><img src="icons/icon-192.png" alt=""><div>WORLD'S EYE<small>THE WORLD, IN REAL TIME</small></div></div><form class="topsearch" id="globalSearch"><input id="globalQ" type="search" placeholder="Search cameras, places, wildlife…" autocomplete="off"><button class="btn" type="button" id="geoBtn" aria-label="Find nearby cameras">⌖</button><button class="btn primary" type="submit">Search</button></form><button class="btn" id="headerFav">☆ <span>Saved</span></button></div></header>
+:root {
+  color-scheme: dark;
+  --bg: #070b12;
+  --bg2: #0b1220;
+  --panel: #0f1726;
+  --panel2: #152033;
+  --panel3: #1a283c;
+  --line: #243247;
+  --line2: #2e425c;
+  --txt: #eef4ff;
+  --muted: #8b9cb3;
+  --muted2: #6b7d96;
+  --blue: #5b9fff;
+  --blue2: #3d7fff;
+  --cyan: #4de8d4;
+  --purple: #a78bfa;
+  --gold: #f0c14b;
+  --danger: #ff6b7a;
+  --radius: 18px;
+  --radius-sm: 12px;
+  --shadow: 0 8px 32px rgba(0,0,0,.35);
+  --glow: 0 0 40px rgba(91,159,255,.12);
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 10% -20%, #1a2f4a 0%, transparent 50%),
+    radial-gradient(ellipse 60% 40% at 90% 10%, #1a1535 0%, transparent 45%),
+    var(--bg);
+  color: var(--txt);
+  font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100dvh;
+}
+button, input, select { font: inherit; color: inherit; }
+button, a { -webkit-tap-highlight-color: transparent; }
+button { cursor: pointer; border: none; background: none; }
+a { color: var(--blue); }
+
+/* Top bar */
+.topbar {
+  position: sticky; top: 0; z-index: 500;
+  background: rgba(7,11,18,.82);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border-bottom: 1px solid var(--line);
+  padding: 10px max(16px, env(safe-area-inset-left)) 10px max(16px, env(safe-area-inset-right));
+}
+.topinner {
+  max-width: 1280px; margin: 0 auto;
+  display: flex; align-items: center; gap: 14px;
+}
+.brand {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 800; letter-spacing: -.03em; font-size: 1.1rem;
+  white-space: nowrap; text-decoration: none; color: var(--txt);
+}
+.brand img {
+  width: 40px; height: 40px; border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(91,159,255,.25);
+}
+.brand small {
+  display: block; font-size: .58rem; letter-spacing: .14em;
+  color: var(--muted); font-weight: 600; margin-top: 1px;
+}
+.topsearch {
+  display: flex; gap: 8px; flex: 1; max-width: 560px; margin: 0 auto;
+}
+.topsearch input {
+  min-width: 0; flex: 1;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 11px 16px;
+  color: var(--txt); outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+.topsearch input:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(91,159,255,.15);
+}
+.topsearch input::placeholder { color: var(--muted2); }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  border: 1px solid var(--line);
+  background: var(--panel2);
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-weight: 650; font-size: .875rem;
+  transition: filter .15s, transform .1s, background .15s;
+  white-space: nowrap;
+}
+.btn:hover { filter: brightness(1.12); }
+.btn:active { transform: scale(.97); }
+.btn.primary {
+  background: linear-gradient(135deg, #3d7fff 0%, #6b5ce7 100%);
+  border: none; color: #fff;
+  box-shadow: 0 4px 16px rgba(61,127,255,.3);
+}
+.btn.primary:hover { filter: brightness(1.08); }
+.btn.ghost { background: transparent; }
+.btn.icon { padding: 10px; min-width: 42px; }
+.btn.sm { padding: 7px 11px; font-size: .8rem; border-radius: 10px; }
+
+/* Main layout */
+main {
+  max-width: 1280px; margin: 0 auto;
+  padding: 20px 18px 110px;
+}
+
+/* Hero */
+.hero {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  gap: 24px; margin: 8px 0 28px;
+}
+.eyebrow {
+  font-size: .7rem; letter-spacing: .18em; color: var(--cyan);
+  font-weight: 700; text-transform: uppercase; margin-bottom: 6px;
+}
+.hero h1 {
+  font-size: clamp(1.9rem, 4.2vw, 3.1rem);
+  line-height: 1.1; letter-spacing: -.045em; margin: 0 0 10px;
+  font-weight: 800;
+}
+.hero h1 span {
+  background: linear-gradient(105deg, #7ab8ff 0%, #b8a4ff 50%, #5eebd8 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.hero p {
+  color: var(--muted); margin: 0; max-width: 520px; font-size: .95rem;
+}
+.hero-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+
+/* Stats */
+.stats {
+  display: grid; grid-template-columns: repeat(4, minmax(0,1fr));
+  gap: 12px; margin-bottom: 22px;
+}
+.stat {
+  background: linear-gradient(160deg, #121e32 0%, #0c1422 100%);
+  border: 1px solid var(--line);
+  border-radius: 16px; padding: 16px 18px;
+  position: relative; overflow: hidden;
+}
+.stat::after {
+  content: ''; position: absolute; top: 0; right: 0; width: 60px; height: 60px;
+  background: radial-gradient(circle, rgba(91,159,255,.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.stat .label { color: var(--muted); font-size: .75rem; font-weight: 500; }
+.stat strong {
+  display: block; font-size: 1.65rem; letter-spacing: -.03em;
+  margin: 4px 0 2px; font-weight: 800;
+}
+.stat .hint { font-size: .7rem; color: var(--cyan); opacity: .85; }
+
+/* Layout grid */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.75fr) minmax(260px, .75fr);
+  gap: 16px; align-items: start;
+}
+.panel {
+  background: linear-gradient(165deg, #101a2b 0%, #0c1420 100%);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.panelhead {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 10px; padding: 15px 18px;
+  border-bottom: 1px solid var(--line);
+}
+.panelhead h2 { font-size: 1rem; margin: 0; font-weight: 700; }
+.panelhead p { color: var(--muted); font-size: .75rem; margin: 2px 0 0; }
+
+/* Map */
+.mapwrap { position: relative; }
+.maptools {
+  position: absolute; z-index: 400; top: 12px; right: 12px;
+  display: flex; gap: 6px;
+}
+.maptools .btn {
+  background: rgba(15,23,38,.92); backdrop-filter: blur(8px);
+  border-color: var(--line2); font-size: .75rem; padding: 7px 11px;
+}
+.map { height: 420px; background: #0a1220; }
+.leaflet-container { background: #0a1220; font: 12px 'DM Sans', sans-serif; }
+.leaflet-popup-content-wrapper, .leaflet-popup-tip {
+  background: #121e30; color: var(--txt); border-radius: 12px;
+  box-shadow: 0 8px 28px rgba(0,0,0,.45);
+}
+.leaflet-popup-content { margin: 12px 14px; line-height: 1.4; }
+.leaflet-popup-content a, .leaflet-popup-content button { color: var(--blue); }
+.leaflet-popup-content .btn { margin-top: 8px; }
+.mapcaption {
+  padding: 10px 16px; color: var(--muted2); font-size: .72rem;
+  border-top: 1px solid var(--line);
+}
+/* Marker cluster overrides */
+.marker-cluster-small, .marker-cluster-medium, .marker-cluster-large {
+  background: rgba(61,127,255,.25) !important;
+}
+.marker-cluster-small div, .marker-cluster-medium div, .marker-cluster-large div {
+  background: rgba(61,127,255,.75) !important;
+  color: #fff !important; font-weight: 700;
+  font-family: 'DM Sans', sans-serif !important;
+}
+
+/* Side column */
+.sidecol { display: flex; flex-direction: column; gap: 16px; }
+.category-grid {
+  display: grid; grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 8px; padding: 12px;
+}
+.cat {
+  border: 1px solid var(--line); border-radius: 14px;
+  background: var(--panel); padding: 12px 11px;
+  text-align: left; min-height: 72px;
+  display: flex; gap: 10px; align-items: center;
+  transition: border-color .15s, background .15s, transform .1s;
+}
+.cat:hover { border-color: var(--line2); background: var(--panel2); }
+.cat:active { transform: scale(.98); }
+.cat .emoji { font-size: 1.35rem; flex-shrink: 0; }
+.cat strong { display: block; font-size: .82rem; font-weight: 700; }
+.cat small { color: var(--muted); font-size: .68rem; }
+.cat.active {
+  border-color: var(--blue);
+  background: linear-gradient(135deg, #152a48 0%, #1a2540 100%);
+  box-shadow: inset 0 0 0 1px rgba(91,159,255,.2);
+}
+
+.directory-list { padding: 10px 12px; display: grid; gap: 7px; }
+.directory {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 10px; padding: 11px 13px;
+  border: 1px solid var(--line); border-radius: 12px;
+  text-decoration: none; color: var(--txt);
+  background: var(--panel); transition: border-color .15s, background .15s;
+}
+.directory:hover { border-color: var(--line2); background: var(--panel2); }
+.directory small { display: block; color: var(--muted); font-size: .72rem; margin-top: 2px; }
+.arrow { color: var(--blue); font-size: .9rem; flex-shrink: 0; }
+
+/* Camera section */
+.sectionbar {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 12px; margin: 28px 0 14px;
+}
+.sectionbar h2 { margin: 0; font-size: 1.3rem; letter-spacing: -.025em; font-weight: 800; }
+.sectionbar p { margin: 3px 0 0; color: var(--muted); font-size: .8rem; }
+.filters {
+  display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;
+}
+.filters input, .filters select {
+  background: var(--panel); border: 1px solid var(--line);
+  color: var(--txt); border-radius: 11px; padding: 10px 13px;
+  min-width: 0; outline: none; transition: border-color .15s;
+}
+.filters input:focus, .filters select:focus { border-color: var(--blue); }
+.filters input { flex: 1; min-width: 180px; }
+.filters select { max-width: 170px; }
+.results-meta {
+  color: var(--muted); font-size: .78rem; margin-bottom: 14px;
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;
+}
+
+/* Camera cards */
+.camera-grid {
+  display: grid; grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: 12px;
+}
+.camcard {
+  min-width: 0;
+  background: linear-gradient(155deg, #121e30 0%, #0e1624 100%);
+  border: 1px solid var(--line);
+  border-radius: 16px; padding: 14px;
+  display: flex; flex-direction: column; gap: 10px;
+  transition: border-color .2s, transform .15s, box-shadow .2s;
+}
+.camcard:hover {
+  border-color: var(--line2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.3);
+}
+.camtop { display: flex; justify-content: space-between; gap: 8px; align-items: flex-start; }
+.camicon {
+  width: 42px; height: 42px; border-radius: 12px;
+  background: linear-gradient(135deg, #1c3a5e 0%, #2a2550 100%);
+  display: grid; place-items: center; font-size: 1.25rem; flex-shrink: 0;
+}
+.camtitle {
+  font-size: .9rem; font-weight: 700; line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+.camloc { font-size: .74rem; color: var(--muted); margin-top: 3px; }
+.tags { display: flex; gap: 5px; flex-wrap: wrap; }
+.tag {
+  font-size: .66rem; border: 1px solid #2a3d55;
+  background: #152638; color: #a8c8f0;
+  border-radius: 999px; padding: 3px 8px; font-weight: 500;
+}
+.tag.stream { color: #7aecd4; background: #0e2e2a; border-color: #1e4f47; }
+.camactions { display: flex; gap: 7px; margin-top: auto; }
+.camactions button, .camactions a {
+  flex: 1; text-align: center; text-decoration: none;
+  border: 1px solid var(--line); border-radius: 10px;
+  background: var(--panel2); padding: 9px 6px;
+  font-size: .76rem; font-weight: 700;
+  transition: filter .15s, background .15s;
+}
+.camactions button:hover, .camactions a:hover { filter: brightness(1.12); }
+.camactions .watch {
+  background: linear-gradient(135deg, #3d7fff, #5a6ef0);
+  border: none; color: #fff;
+}
+.camactions .save.saved { color: var(--gold); border-color: #6b5420; background: #1f1a0e; }
+.btn-fav {
+  padding: 6px 9px !important; border-radius: 10px;
+  border: 1px solid var(--line); background: var(--panel2);
+  font-size: .95rem; line-height: 1;
+}
+.btn-fav.saved { color: var(--gold); border-color: #6b5420; }
+
+.empty {
+  padding: 40px 20px; text-align: center; color: var(--muted);
+  border: 1px dashed var(--line); border-radius: 16px;
+  grid-column: 1 / -1;
+}
+.empty strong { display: block; color: var(--txt); margin-bottom: 6px; font-size: 1.05rem; }
+.empty .btn { margin-top: 14px; }
+
+.notice {
+  margin-top: 24px;
+  border: 1px solid var(--line); background: var(--panel);
+  border-radius: 14px; padding: 14px 18px;
+  color: var(--muted); font-size: .8rem;
+}
+.notice strong { color: var(--txt); }
+
+footer {
+  padding: 28px 16px; text-align: center;
+  color: var(--muted2); font-size: .74rem;
+  border-top: 1px solid var(--line);
+}
+
+/* Bottom nav (mobile) */
+.bottomnav {
+  display: none;
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 600;
+  background: rgba(8,12,20,.92);
+  backdrop-filter: blur(18px) saturate(1.3);
+  -webkit-backdrop-filter: blur(18px) saturate(1.3);
+  border-top: 1px solid var(--line);
+  padding: 7px 4px max(7px, env(safe-area-inset-bottom));
+  justify-content: space-around;
+}
+.navbtn {
+  background: none; border: 0; color: var(--muted);
+  font-size: .65rem; display: grid; justify-items: center; gap: 2px;
+  min-width: 56px; padding: 4px; font-weight: 600;
+}
+.navbtn span { font-size: 1.2rem; }
+.navbtn.active { color: #8abaff; }
+
+/* Modal player */
+.modal {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(2,5,12,.88);
+  backdrop-filter: blur(6px);
+  display: none; align-items: center; justify-content: center;
+  padding: 16px;
+}
+.modal.open { display: flex; }
+.modalbox {
+  width: min(960px, 100%); max-height: 94dvh; overflow: auto;
+  background: #0f1726; border: 1px solid #2a3d55;
+  border-radius: 20px; box-shadow: 0 24px 80px rgba(0,0,0,.55);
+  animation: modalIn .25s ease;
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(.96) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.modalhead {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px; border-bottom: 1px solid var(--line); gap: 12px;
+}
+.modalhead h2 {
+  font-size: 1rem; margin: 0; font-weight: 700;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.close {
+  font-size: 1.35rem; border: 1px solid var(--line);
+  border-radius: 10px; background: var(--panel2);
+  width: 38px; height: 38px; flex-shrink: 0;
+  display: grid; place-items: center; line-height: 1;
+}
+.player {
+  aspect-ratio: 16/9; background: #03070c;
+  display: grid; place-items: center; position: relative;
+}
+.player video, .player iframe {
+  width: 100%; height: 100%; border: 0; background: #03070c;
+}
+.playernote {
+  padding: 14px 18px; color: var(--muted); font-size: .82rem;
+  border-top: 1px solid var(--line);
+}
+.playernote a { color: #8fc1ff; }
+.player-actions {
+  display: flex; gap: 8px; flex-wrap: wrap; padding: 0 18px 14px;
+}
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: var(--panel3); border: 1px solid var(--line2);
+  color: var(--txt); padding: 10px 18px; border-radius: 12px;
+  font-size: .85rem; font-weight: 600; z-index: 2000;
+  opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s;
+  box-shadow: var(--shadow); white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* Skeleton */
+.skeleton {
+  background: linear-gradient(90deg, var(--panel) 25%, var(--panel2) 50%, var(--panel) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: 8px;
+}
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.hide { display: none !important; }
+
+/* Responsive */
+@media (max-width: 980px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidecol { display: grid; grid-template-columns: 1fr 1fr; }
+  .camera-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .map { height: 360px; }
+}
+@media (max-width: 620px) {
+  .topbar { padding: 8px 12px; }
+  .topinner { gap: 8px; flex-wrap: wrap; }
+  .brand img { width: 36px; height: 36px; }
+  .topsearch { order: 2; flex-basis: 100%; max-width: none; }
+  .topsearch input { padding: 11px 13px; }
+  .topsearch .geo-btn { display: none; }
+  main { padding: 16px 12px 100px; }
+  .hero { display: block; margin: 4px 0 20px; }
+  .hero-actions { margin-top: 14px; }
+  .stats { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; }
+  .stat { padding: 13px; }
+  .stat strong { font-size: 1.4rem; }
+  .sidecol { grid-template-columns: 1fr; }
+  .map { height: 300px; }
+  .camera-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .camcard { padding: 12px; border-radius: 14px; }
+  .camicon { width: 36px; height: 36px; font-size: 1.1rem; }
+  .camtitle { font-size: .82rem; }
+  .camactions { flex-direction: column; }
+  .sectionbar { flex-direction: column; gap: 8px; }
+  .filters select { flex: 1; max-width: none; }
+  .filters input { min-width: 100%; flex-basis: 100%; }
+  .bottomnav { display: flex; }
+  .category-grid { gap: 7px; padding: 10px; }
+  .cat { padding: 10px 9px; min-height: 66px; }
+  .notice { font-size: .75rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topinner">
+    <a class="brand" href="./" aria-label="World's Eye home">
+      <img src="icons/icon-192.png" width="40" height="40" alt="">
+      <div>WORLD'S EYE<small>THE WORLD, IN REAL TIME</small></div>
+    </a>
+    <form class="topsearch" id="globalSearch" role="search">
+      <input id="globalQ" type="search" placeholder="Search cameras, cities, wildlife…" autocomplete="off" aria-label="Search cameras">
+      <button class="btn icon geo-btn" type="button" id="geoBtn" title="Find nearby cameras" aria-label="Find nearby cameras">⌖</button>
+      <button class="btn primary" type="submit">Search</button>
+    </form>
+    <button class="btn" id="headerFav" title="Saved cameras">☆ <span class="fav-label">Saved</span></button>
+  </div>
+</header>
+
 <main id="home">
-<section class="hero"><div><div class="eyebrow">✦ A window onto the planet</div><h1>Explore the world.<br><span>One live view at a time.</span></h1><p>Discover public webcams, coastlines, city streets, wildlife habitats and remarkable places around the globe.</p></div><div class="hero-actions"><button class="btn primary" id="exploreBtn">Explore cameras ↓</button><button class="btn" id="worldBtn">◎ World map</button></div></section>
-<section class="stats" aria-label="Camera catalogue overview"><div class="stat"><span class="label">Indexed cameras</span><strong id="statCams">…</strong><span class="hint">Across the catalogue</span></div><div class="stat"><span class="label">Countries / regions</span><strong id="statCountries">…</strong><span class="hint">Based on indexed locations</span></div><div class="stat"><span class="label">Stream formats</span><strong id="statTypes">…</strong><span class="hint">HLS and YouTube entries</span></div><div class="stat"><span class="label">Your saved cameras</span><strong id="statSaved">0</strong><span class="hint">Stored on this device</span></div></section>
-<div class="layout"><section class="panel" id="mapPanel"><div class="panelhead"><div><h2>🌐 Explore the globe</h2><p>Choose a marker or zoom into a region to find indexed cameras.</p></div><button class="btn" id="resetMap">Reset view</button></div><div class="mapwrap"><div class="maptools"><button id="mapAll">Show world</button><button id="mapNear">Near me</button></div><div id="map" class="map" aria-label="World camera map"></div></div><div class="mapcaption">Map © OpenStreetMap contributors · Camera pins show catalogue locations, not guaranteed live status.</div></section>
-<aside class="sidecol"><section class="panel"><div class="panelhead"><div><h2>Explore by interest</h2><p>Filter the catalogue in one tap.</p></div></div><div class="category-grid" id="categories"><button class="cat" data-cat="city"><span class="emoji">🌆</span><span><strong>City life</strong><small>Streets & skylines</small></span></button><button class="cat" data-cat="coastal"><span class="emoji">🏝️</span><span><strong>Coasts & beaches</strong><small>Seas & harbours</small></span></button><button class="cat" data-cat="wildlife"><span class="emoji">🦜</span><span><strong>Wildlife & nature</strong><small>Outdoor habitats</small></span></button><button class="cat" data-cat="traffic"><span class="emoji">🚦</span><span><strong>Traffic</strong><small>Roads & junctions</small></span></button><button class="cat" data-cat="mountain"><span class="emoji">🏔️</span><span><strong>Mountains</strong><small>Alpine views</small></span></button><button class="cat" data-cat="all"><span class="emoji">🌍</span><span><strong>All cameras</strong><small>Full catalogue</small></span></button></div></section>
-<section class="panel"><div class="panelhead"><div><h2>Beyond the catalogue</h2><p>Open large public camera networks.</p></div></div><div class="directory-list" id="directories"></div></section></aside></div>
-<section id="cameraSection"><div class="sectionbar"><div><h2 id="resultsTitle">Discover cameras</h2><p id="resultsSub">Browse the catalogue or search for a place or subject.</p></div><button class="btn" id="clearFilters">Clear filters</button></div><div class="filters"><input id="camSearch" type="search" placeholder="Filter by camera name, country or category…"><select id="countryFilter"><option value="">All countries</option></select><select id="typeFilter"><option value="">All formats</option><option value="hls">HLS stream</option><option value="youtube">YouTube</option></select><select id="sortFilter"><option value="name">Sort: Name</option><option value="country">Sort: Country</option><option value="type">Sort: Format</option></select></div><div class="results-meta" id="resultsMeta">Loading catalogue…</div><div class="camera-grid" id="cameraGrid" aria-live="polite"></div><div style="display:flex;justify-content:center;margin-top:15px"><button class="btn" id="loadMore">Load more cameras</button></div></section>
-<div class="notice"><strong>Public cameras, clearly labelled.</strong> World's Eye brings together its bundled catalogue and links to external camera networks. A catalogue entry does not guarantee a stream is online right now. Some providers block in-app playback; in those cases, open the original source. Private or access-controlled cameras are not included.</div>
-</main><footer>World's Eye · Public camera discovery · Built for GitHub Pages and mobile Home Screens</footer>
-<nav class="bottomnav" aria-label="Main navigation"><button class="navbtn active" data-scroll="home"><span>⌂</span>Home</button><button class="navbtn" data-scroll="mapPanel"><span>◎</span>Map</button><button class="navbtn" data-scroll="cameraSection"><span>▦</span>Cameras</button><button class="navbtn" id="navSaved"><span>☆</span>Saved</button></nav>
-<div class="modal" id="playerModal" role="dialog" aria-modal="true" aria-labelledby="playerTitle"><div class="modalbox"><div class="modalhead"><h2 id="playerTitle">Camera player</h2><button class="close" id="closePlayer" aria-label="Close player">×</button></div><div class="player" id="player"></div><div class="playernote" id="playerNote"></div></div></div>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <section class="hero">
+    <div>
+      <div class="eyebrow">✦ A window onto the planet</div>
+      <h1>Explore the world.<br><span>One live view at a time.</span></h1>
+      <p>Discover public webcams — coastlines, city streets, wildlife habitats and remarkable places around the globe.</p>
+    </div>
+    <div class="hero-actions">
+      <button class="btn primary" id="exploreBtn">Explore cameras ↓</button>
+      <button class="btn" id="worldBtn">◎ World map</button>
+      <button class="btn" id="randomBtn" title="Open a random camera">🎲 Surprise me</button>
+    </div>
+  </section>
+
+  <section class="stats" aria-label="Camera catalogue overview">
+    <div class="stat">
+      <span class="label">Indexed cameras</span>
+      <strong id="statCams">…</strong>
+      <span class="hint">Across the catalogue</span>
+    </div>
+    <div class="stat">
+      <span class="label">Countries / regions</span>
+      <strong id="statCountries">…</strong>
+      <span class="hint">Based on indexed locations</span>
+    </div>
+    <div class="stat">
+      <span class="label">Stream formats</span>
+      <strong id="statTypes">…</strong>
+      <span class="hint">HLS · YouTube · Web</span>
+    </div>
+    <div class="stat">
+      <span class="label">Your saved cameras</span>
+      <strong id="statSaved">0</strong>
+      <span class="hint">Stored on this device</span>
+    </div>
+  </section>
+
+  <div class="layout">
+    <section class="panel" id="mapPanel">
+      <div class="panelhead">
+        <div>
+          <h2>🌐 Explore the globe</h2>
+          <p>Zoom in or tap a cluster to find cameras. Markers are clustered for clarity.</p>
+        </div>
+        <button class="btn sm" id="resetMap">Reset view</button>
+      </div>
+      <div class="mapwrap">
+        <div class="maptools">
+          <button class="btn" id="mapAll">Show world</button>
+          <button class="btn" id="mapNear">Near me</button>
+        </div>
+        <div id="map" class="map" aria-label="World camera map"></div>
+      </div>
+      <div class="mapcaption">Map © OpenStreetMap · Clusters show density of indexed cameras (live status not guaranteed)</div>
+    </section>
+
+    <aside class="sidecol">
+      <section class="panel">
+        <div class="panelhead">
+          <div>
+            <h2>Explore by interest</h2>
+            <p>Filter the catalogue in one tap.</p>
+          </div>
+        </div>
+        <div class="category-grid" id="categories">
+          <button class="cat" data-cat="city"><span class="emoji">🌆</span><span><strong>City life</strong><small>Streets & skylines</small></span></button>
+          <button class="cat" data-cat="coastal"><span class="emoji">🏝️</span><span><strong>Coasts & beaches</strong><small>Seas & harbours</small></span></button>
+          <button class="cat" data-cat="wildlife"><span class="emoji">🦜</span><span><strong>Wildlife & nature</strong><small>Outdoor habitats</small></span></button>
+          <button class="cat" data-cat="traffic"><span class="emoji">🚦</span><span><strong>Traffic</strong><small>Roads & junctions</small></span></button>
+          <button class="cat" data-cat="mountain"><span class="emoji">🏔️</span><span><strong>Mountains</strong><small>Alpine views</small></span></button>
+          <button class="cat active" data-cat="all"><span class="emoji">🌍</span><span><strong>All cameras</strong><small>Full catalogue</small></span></button>
+        </div>
+      </section>
+      <section class="panel">
+        <div class="panelhead">
+          <div>
+            <h2>Beyond the catalogue</h2>
+            <p>Open large public camera networks.</p>
+          </div>
+        </div>
+        <div class="directory-list" id="directories"></div>
+      </section>
+    </aside>
+  </div>
+
+  <section id="cameraSection">
+    <div class="sectionbar">
+      <div>
+        <h2 id="resultsTitle">Discover cameras</h2>
+        <p id="resultsSub">Browse the catalogue or search for a place or subject.</p>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn sm" id="randomBtn2" title="Random camera">🎲 Random</button>
+        <button class="btn sm" id="clearFilters">Clear filters</button>
+      </div>
+    </div>
+    <div class="filters">
+      <input id="camSearch" type="search" placeholder="Filter by name, country or category…" aria-label="Filter cameras">
+      <select id="countryFilter" aria-label="Filter by country"><option value="">All countries</option></select>
+      <select id="typeFilter" aria-label="Filter by format">
+        <option value="">All formats</option>
+        <option value="hls">HLS stream</option>
+        <option value="youtube">YouTube</option>
+      </select>
+      <select id="sortFilter" aria-label="Sort cameras">
+        <option value="name">Sort: Name</option>
+        <option value="country">Sort: Country</option>
+        <option value="type">Sort: Format</option>
+      </select>
+    </div>
+    <div class="results-meta" id="resultsMeta">Loading catalogue…</div>
+    <div class="camera-grid" id="cameraGrid" aria-live="polite"></div>
+    <div style="display:flex;justify-content:center;margin-top:18px">
+      <button class="btn" id="loadMore">Load more cameras</button>
+    </div>
+  </section>
+
+  <div class="notice">
+    <strong>Public cameras, clearly labelled.</strong>
+    World's Eye brings together a curated catalogue and links to external networks.
+    A catalogue entry does not guarantee a stream is online right now.
+    Some providers block in-app playback — use <strong>Source ↗</strong> or the player fallback.
+    Private or access-controlled cameras are not included.
+  </div>
+</main>
+
+<footer>World's Eye · Public camera discovery · Built for GitHub Pages &amp; mobile Home Screens</footer>
+
+<nav class="bottomnav" aria-label="Main navigation">
+  <button class="navbtn active" data-scroll="home"><span>⌂</span>Home</button>
+  <button class="navbtn" data-scroll="mapPanel"><span>◎</span>Map</button>
+  <button class="navbtn" data-scroll="cameraSection"><span>▦</span>Cameras</button>
+  <button class="navbtn" id="navSaved"><span>☆</span>Saved</button>
+</nav>
+
+<div class="modal" id="playerModal" role="dialog" aria-modal="true" aria-labelledby="playerTitle">
+  <div class="modalbox">
+    <div class="modalhead">
+      <h2 id="playerTitle">Camera player</h2>
+      <button class="close" id="closePlayer" aria-label="Close player">×</button>
+    </div>
+    <div class="player" id="player"></div>
+    <div class="playernote" id="playerNote"></div>
+    <div class="player-actions" id="playerActions"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js"></script>
 <script>
-(()=>{'use strict';
-const $=id=>document.getElementById(id);let cameras=[],map,camLayer,homeMarker,filtered=[],visible=36,activeCategory='all',savedOnly=false,selectedCountry='';const FAV_KEY='we-favs-v2';
-const dirs=[['TrafficVision.Live','https://trafficvision.live/map','Large public camera map'],['LiveCamsMap','https://livecamsmap.com/','Worldwide webcam directory'],['Windy Webcams','https://www.windy.com/webcams','Webcams with weather context'],['WorldCam','https://worldcam.tv/','Curated international webcams'],['OpenWebcamDB','https://openwebcamdb.com/','Public webcam directory'],['EarthLive24','https://earthlive24.com/','Cities and nature streams'],['YouTube Live Webcams','https://www.youtube.com/results?search_query=live+webcam','Search public live webcam broadcasts']];
-$('directories').innerHTML=dirs.map(d=>`<a class="directory" href="${d[1]}" target="_blank" rel="noopener noreferrer"><span><strong>${d[0]}</strong><small>${d[2]}</small></span><span class="arrow">↗</span></a>`).join('');
-const favs=()=>{try{return JSON.parse(localStorage.getItem(FAV_KEY)||'[]')}catch{return[]}};function saveFavs(a){try{localStorage.setItem(FAV_KEY,JSON.stringify(a.slice(0,300)))}catch{}$('statSaved').textContent=a.length}
-function escape(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}function norm(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
-function category(c){let e=norm(c.e+' '+c.n+' '+c.c);if(/wildlife|bird|animal|zoo|nature|forest|eagle|nest/.test(e))return'wildlife';if(/coast|beach|sea|ocean|harbour|harbor|marina|surf|bay|rambla/.test(e))return'coastal';if(/traffic|road|street|highway|motorway|junction/.test(e))return'traffic';if(/mountain|alpine|ski|snow|summit/.test(e))return'mountain';return'city'}function icon(c){return({wildlife:'🦜',coastal:'🌊',traffic:'🚦',mountain:'🏔️',city:'🌆'})[category(c)]||'📹'}function countryName(code){try{return new Intl.DisplayNames(['en'],{type:'region'}).of(code)||code||'Unknown'}catch{return code||'Unknown'}}
-function isSaved(c){return favs().some(f=>f.u===c.u)}function toggleSaved(c){let a=favs();a=isSaved(c)?a.filter(x=>x.u!==c.u):[{n:c.n,u:c.u,c:c.c,e:c.e,t:c.t,lat:c.lat,lon:c.lon},...a];saveFavs(a);render()}
-function card(c){let saved=isSaved(c);let fmt=c.t==='hls'?'HLS stream':c.t==='youtube'?'YouTube':'Web page';return `<article class="camcard"><div class="camtop"><div class="camicon">${icon(c)}</div><button class="btn ${saved?'saved':''}" style="padding:6px 9px" data-save="${escape(c.u)}" aria-label="${saved?'Remove saved camera':'Save camera'}">${saved?'★':'☆'}</button></div><div><div class="camtitle">${escape(c.n||'Unnamed camera')}</div><div class="camloc">${escape(countryName(c.c))}${c.e?' · '+escape(c.e):''}</div></div><div class="tags"><span class="tag stream">${fmt}</span><span class="tag">${category(c)==='city'?'City / general':category(c)}</span></div><div class="camactions"><button class="watch" data-watch="${escape(c.u)}">▶ Watch</button><a href="${escape(c.u)}" target="_blank" rel="noopener noreferrer">Source ↗</a></div></article>`}
-function applyFilters(){const q=norm($('camSearch').value),country=$('countryFilter').value,type=$('typeFilter').value,sort=$('sortFilter').value;filtered=cameras.filter(c=>{const text=norm([c.n,c.c,countryName(c.c),c.e,c.t].join(' '));return(!q||text.includes(q))&&(!country||c.c===country)&&(!type||c.t===type)&&(activeCategory==='all'||category(c)===activeCategory)&&(!savedOnly||isSaved(c))});filtered.sort((a,b)=>sort==='country'?countryName(a.c).localeCompare(countryName(b.c)):sort==='type'?String(a.t).localeCompare(String(b.t)):String(a.n).localeCompare(String(b.n)));visible=36;renderGrid()}
-function renderGrid(){const shown=filtered.slice(0,visible);$('cameraGrid').innerHTML=shown.length?shown.map(card).join(''):`<div class="empty"><strong>${savedOnly?'No saved cameras yet':'No matching cameras found'}</strong>${savedOnly?'Tap ☆ on a camera to keep it here.':'Try a broader search, another category, or use the worldwide camera directories above.'}</div>`;$('resultsMeta').textContent=`Showing ${shown.length.toLocaleString()} of ${filtered.length.toLocaleString()} matching cameras · ${cameras.length.toLocaleString()} total indexed`;$('loadMore').classList.toggle('hide',visible>=filtered.length)}function render(){applyFilters();$('statSaved').textContent=favs().length}
-function setCategory(cat){activeCategory=cat;savedOnly=false;$('categories').querySelectorAll('[data-cat]').forEach(b=>b.classList.toggle('active',b.dataset.cat===cat));$('resultsTitle').textContent=cat==='all'?'Discover cameras':cat==='coastal'?'Coasts & beaches':cat==='wildlife'?'Wildlife & nature':cat==='traffic'?'Traffic cameras':cat==='mountain'?'Mountain views':'City life';render();$('cameraSection').scrollIntoView({behavior:'smooth',block:'start'})}
-function initMap(){if(!window.L){$('map').innerHTML='<div class="empty">The map library could not load. Camera search still works below.</div>';return}map=L.map('map',{worldCopyJump:true,scrollWheelZoom:false}).setView([20,0],2);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors',maxZoom:18}).addTo(map);camLayer=L.layerGroup().addTo(map);paintMarkers();map.on('moveend',()=>{$('map').dataset.bounds='set'})}
-function paintMarkers(list=cameras){if(!camLayer)return;camLayer.clearLayers();let points=list.filter(c=>Number.isFinite(+c.lat)&&Number.isFinite(+c.lon));if(points.length>700){let step=Math.ceil(points.length/700);points=points.filter((_,i)=>i%step===0)}points.forEach(c=>L.circleMarker([+c.lat,+c.lon],{radius:4,color:'#5ba5ff',fillColor:'#64a8ff',fillOpacity:.8,weight:1}).bindPopup(`<strong>${escape(c.n)}</strong><br>${escape(countryName(c.c))}<br><button class="btn primary" data-map-watch="${escape(c.u)}">▶ Watch</button>`).addTo(camLayer))}
-function showWorld(){if(map){map.setView([20,0],2);paintMarkers()}}function geolocate(){if(!navigator.geolocation){alert('Location is not available in this browser.');return}navigator.geolocation.getCurrentPosition(p=>{const lat=p.coords.latitude,lon=p.coords.longitude;if(map){map.setView([lat,lon],8);if(homeMarker)map.removeLayer(homeMarker);homeMarker=L.marker([lat,lon]).addTo(map).bindPopup('Your approximate location').openPopup()}const near=cameras.map(c=>({...c,d:distance(lat,lon,+c.lat,+c.lon)})).filter(c=>Number.isFinite(c.d)).sort((a,b)=>a.d-b.d).slice(0,36);$('camSearch').value='';$('countryFilter').value='';activeCategory='all';savedOnly=false;filtered=near;visible=36;$('resultsTitle').textContent='Cameras near you';$('resultsSub').textContent='Sorted by approximate distance from your current location.';$('cameraGrid').innerHTML=near.length?near.map(c=>card(c)+`<div class="hide">${c.d}</div>`).join(''):'<div class="empty">No indexed cameras found nearby. Try the world directories.</div>';$('resultsMeta').textContent=`${near.length} indexed cameras nearest your location`; $('loadMore').classList.add('hide');$('cameraSection').scrollIntoView({behavior:'smooth'})},()=>alert('Could not access location. Check your browser permission or search for a city.'),{timeout:10000,maximumAge:300000})}function distance(a,b,c,d){let r=Math.PI/180,da=(c-a)*r,db=(d-b)*r,x=Math.sin(da/2)**2+Math.cos(a*r)*Math.cos(c*r)*Math.sin(db/2)**2;return 6371*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x))}
-async function searchGlobal(q){$('camSearch').value=q;$('countryFilter').value='';activeCategory='all';savedOnly=false;$('categories').querySelectorAll('[data-cat]').forEach(b=>b.classList.toggle('active',b.dataset.cat==='all'));render();$('resultsTitle').textContent='Search results';$('resultsSub').textContent=`Matching camera names, countries and categories for “${q}”.`;if(filtered.length){const c=filtered[0];if(map&&Number.isFinite(+c.lat)&&Number.isFinite(+c.lon))map.setView([+c.lat,+c.lon],Math.max(map.getZoom(),5))}else{try{const r=await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q='+encodeURIComponent(q),{headers:{Accept:'application/json'}});if(r.ok){const d=await r.json();if(d[0]&&map){map.setView([+d[0].lat,+d[0].lon],9);$('resultsSub').textContent=`No direct catalogue matches. Map centred on ${d[0].display_name}; try the global directories for feeds at this location.`}}}catch{}}const enc=encodeURIComponent(q);const dyn=[['YouTube live webcams for “'+q+'”','https://www.youtube.com/results?search_query='+enc+'+live+webcam','Search public live broadcasts for this place or subject'],['YouTube live cameras for “'+q+'”','https://www.youtube.com/results?search_query='+enc+'+live+camera','Alternative live camera search'],['Windy webcam map','https://www.windy.com/webcams','Browse webcams with weather context']];$('directories').innerHTML=dirs.map(d=>`<a class="directory" href="${d[1]}" target="_blank" rel="noopener noreferrer"><span><strong>${d[0]}</strong><small>${d[2]}</small></span><span class="arrow">↗</span></a>`).join('')+dyn.map(d=>`<a class="directory" href="${d[1]}" target="_blank" rel="noopener noreferrer"><span><strong>${escape(d[0])}</strong><small>${escape(d[2])}</small></span><span class="arrow">↗</span></a>`).join('');$('cameraSection').scrollIntoView({behavior:'smooth',block:'start'})}
-function playerOpen(url){const c=cameras.find(x=>x.u===url)||favs().find(x=>x.u===url)||{n:'Public camera',u:url,t:url.includes('youtube')?'youtube':url.includes('.m3u8')?'hls':'page'};$('playerTitle').textContent=c.n||'Camera player';$('player').innerHTML='';$('playerNote').innerHTML='';$('playerModal').classList.add('open');document.body.style.overflow='hidden';let yt=null;try{const u=new URL(url);if(u.hostname.includes('youtu.be'))yt=u.pathname.slice(1);else if(u.hostname.includes('youtube.com'))yt=u.searchParams.get('v')||u.pathname.match(/\/embed\/([^/]+)/)?.[1]||null}catch{}if(yt){const frame=document.createElement('iframe');frame.src='https://www.youtube-nocookie.com/embed/'+encodeURIComponent(yt)+'?autoplay=1';frame.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';frame.allowFullscreen=true;frame.title=c.n;$('player').append(frame);$('playerNote').textContent='Playback is provided by YouTube. If this stream is unavailable, open its source page.'}else if(/\.m3u8(?:$|\?)/i.test(url)){const v=document.createElement('video');v.controls=true;v.autoplay=true;v.playsInline=true;v.setAttribute('playsinline','');$('player').append(v);if(v.canPlayType('application/vnd.apple.mpegurl')){v.src=url;v.play().catch(()=>{})}else if(window.Hls&&Hls.isSupported()){const h=new Hls({enableWorker:true});h.loadSource(url);h.attachMedia(v);h.on(Hls.Events.ERROR,(_,data)=>{if(data.fatal)$('playerNote').innerHTML='This source may block embedded playback or be offline. <a href="'+escape(url)+'" target="_blank" rel="noopener">Open original stream ↗</a>';});}else{$('player').innerHTML='<div class="playernote">This browser cannot play this stream format.</div>'}$('playerNote').innerHTML='If playback fails, try the original stream. Some providers restrict embedding. <a href="'+escape(url)+'" target="_blank" rel="noopener">Open original source ↗</a>'}else{$('player').innerHTML='<div style="text-align:center;padding:20px;color:#91a2bb">This camera is listed as a webpage rather than a directly playable stream.<br><br><a class="btn primary" href="'+escape(url)+'" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none">Open camera website ↗</a></div>';$('playerNote').textContent='External sites may restrict embedding. Opening the source is the fallback.'}}
-function playerClose(){$('playerModal').classList.remove('open');$('player').querySelectorAll('video,iframe').forEach(x=>{try{x.pause?.();x.src='about:blank'}catch{}});$('player').innerHTML='';document.body.style.overflow=''}window.worldEyeWatch=playerOpen;
-$('globalSearch').addEventListener('submit',e=>{e.preventDefault();let q=$('globalQ').value.trim();if(q)searchGlobal(q)});$('camSearch').addEventListener('input',()=>{savedOnly=false;render()});$('countryFilter').addEventListener('change',render);$('typeFilter').addEventListener('change',render);$('sortFilter').addEventListener('change',render);$('clearFilters').addEventListener('click',()=>{$('camSearch').value='';$('countryFilter').value='';$('typeFilter').value='';$('sortFilter').value='name';savedOnly=false;setCategory('all')});$('categories').addEventListener('click',e=>{const b=e.target.closest('[data-cat]');if(b)setCategory(b.dataset.cat)});$('map').addEventListener('click',e=>{const b=e.target.closest('[data-map-watch]');if(b)playerOpen(b.dataset.mapWatch)});$('cameraGrid').addEventListener('click',e=>{const s=e.target.closest('[data-save]'),w=e.target.closest('[data-watch]');if(s){const c=cameras.find(x=>x.u===s.dataset.save)||favs().find(x=>x.u===s.dataset.save);if(c)toggleSaved(c)}if(w)playerOpen(w.dataset.watch)});$('loadMore').addEventListener('click',()=>{visible+=36;renderGrid()});$('geoBtn').addEventListener('click',geolocate);$('mapNear').addEventListener('click',geolocate);$('mapAll').addEventListener('click',showWorld);$('resetMap').addEventListener('click',showWorld);$('worldBtn').addEventListener('click',()=>{$('mapPanel').scrollIntoView({behavior:'smooth'});showWorld()});$('exploreBtn').addEventListener('click',()=>$('cameraSection').scrollIntoView({behavior:'smooth'}));function showSaved(){$('camSearch').value='';$('countryFilter').value='';$('typeFilter').value='';savedOnly=true;activeCategory='all';$('categories').querySelectorAll('[data-cat]').forEach(b=>b.classList.toggle('active',b.dataset.cat==='all'));$('resultsTitle').textContent='Your saved cameras';$('resultsSub').textContent='Your personal camera collection, stored on this device.';render();$('cameraSection').scrollIntoView({behavior:'smooth'})}$('headerFav').addEventListener('click',showSaved);$('navSaved').addEventListener('click',showSaved);$('closePlayer').addEventListener('click',playerClose);$('playerModal').addEventListener('click',e=>{if(e.target===$('playerModal'))playerClose()});document.addEventListener('keydown',e=>{if(e.key==='Escape')playerClose()});document.querySelectorAll('[data-scroll]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.navbtn').forEach(x=>x.classList.toggle('active',x===b));$(b.dataset.scroll).scrollIntoView({behavior:'smooth'})}));
-fetch('./cameras.json').then(r=>{if(!r.ok)throw Error('Catalogue request failed');return r.json()}).then(data=>{cameras=Array.isArray(data)?data.filter(c=>c&&c.u&&Number.isFinite(+c.lat)&&Number.isFinite(+c.lon)):[];const countries=[...new Set(cameras.map(c=>c.c).filter(Boolean))].sort((a,b)=>countryName(a).localeCompare(countryName(b)));$('countryFilter').insertAdjacentHTML('beforeend',countries.map(c=>`<option value="${escape(c)}">${escape(countryName(c))}</option>`).join(''));$('statCams').textContent=cameras.length.toLocaleString();$('statCountries').textContent=countries.length.toLocaleString();$('statTypes').textContent=new Set(cameras.map(c=>c.t)).size.toString();$('statSaved').textContent=favs().length;initMap();render();$('resultsSub').textContent='Search across the bundled camera catalogue, then explore external worldwide networks for more.'}).catch(err=>{$('statCams').textContent='—';$('statCountries').textContent='—';$('resultsMeta').textContent='Could not load cameras.json. Check that the file is in the GitHub Pages repository root.';$('cameraGrid').innerHTML='<div class="empty"><strong>Camera catalogue could not load</strong>Check that cameras.json was uploaded beside index.html.</div>';initMap();console.error(err)});
-if('serviceWorker'in navigator&&location.protocol.startsWith('http'))addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+(() => {
+'use strict';
+
+const $ = id => document.getElementById(id);
+let cameras = [];
+let map, clusterGroup, homeMarker;
+let filtered = [];
+let visible = 36;
+let activeCategory = 'all';
+let savedOnly = false;
+
+const FAV_KEY = 'we-favs-v3';
+const PAGE = 36;
+
+const dirs = [
+  ['TrafficVision.Live', 'https://trafficvision.live/map', 'Large public camera map'],
+  ['LiveCamsMap', 'https://livecamsmap.com/', 'Worldwide webcam directory'],
+  ['Windy Webcams', 'https://www.windy.com/webcams', 'Webcams with weather context'],
+  ['WorldCam', 'https://worldcam.tv/', 'Curated international webcams'],
+  ['OpenWebcamDB', 'https://openwebcamdb.com/', 'Public webcam directory'],
+  ['EarthLive24', 'https://earthlive24.com/', 'Cities and nature streams'],
+  ['YouTube Live Webcams', 'https://www.youtube.com/results?search_query=live+webcam', 'Search public live broadcasts']
+];
+
+$('directories').innerHTML = dirs.map(d =>
+  `<a class="directory" href="${d[1]}" target="_blank" rel="noopener noreferrer">
+    <span><strong>${d[0]}</strong><small>${d[2]}</small></span>
+    <span class="arrow">↗</span>
+  </a>`
+).join('');
+
+/* ── Helpers ── */
+function favs() {
+  try { return JSON.parse(localStorage.getItem(FAV_KEY) || '[]'); }
+  catch { return []; }
+}
+function saveFavs(a) {
+  try { localStorage.setItem(FAV_KEY, JSON.stringify(a.slice(0, 400))); } catch {}
+  $('statSaved').textContent = a.length;
+}
+function escape(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+function norm(s) {
+  return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+function category(c) {
+  const e = norm(c.e + ' ' + c.n + ' ' + c.c);
+  if (/wildlife|bird|animal|zoo|nature|forest|eagle|nest|safari/.test(e)) return 'wildlife';
+  if (/coast|beach|sea|ocean|harbour|harbor|marina|surf|bay|rambla|shore|island/.test(e)) return 'coastal';
+  if (/traffic|road|street|highway|motorway|junction|freeway/.test(e)) return 'traffic';
+  if (/mountain|alpine|ski|snow|summit|peak|pass/.test(e)) return 'mountain';
+  return 'city';
+}
+function icon(c) {
+  return ({ wildlife: '🦜', coastal: '🌊', traffic: '🚦', mountain: '🏔️', city: '🌆' })[category(c)] || '📹';
+}
+function countryName(code) {
+  try { return new Intl.DisplayNames(['en'], { type: 'region' }).of(code) || code || 'Unknown'; }
+  catch { return code || 'Unknown'; }
+}
+function isSaved(c) { return favs().some(f => f.u === c.u); }
+function toggleSaved(c) {
+  let a = favs();
+  const was = isSaved(c);
+  a = was ? a.filter(x => x.u !== c.u) : [{ n: c.n, u: c.u, c: c.c, e: c.e, t: c.t, lat: c.lat, lon: c.lon }, ...a];
+  saveFavs(a);
+  toast(was ? 'Removed from saved' : 'Saved to this device');
+  render();
+}
+function toast(msg) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._tid);
+  t._tid = setTimeout(() => t.classList.remove('show'), 2200);
+}
+function distance(a, b, c, d) {
+  const r = Math.PI / 180;
+  const da = (c - a) * r, db = (d - b) * r;
+  const x = Math.sin(da / 2) ** 2 + Math.cos(a * r) * Math.cos(c * r) * Math.sin(db / 2) ** 2;
+  return 6371 * 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x));
+}
+
+/* ── Cards ── */
+function card(c) {
+  const saved = isSaved(c);
+  const fmt = c.t === 'hls' ? 'HLS stream' : c.t === 'youtube' ? 'YouTube' : 'Web page';
+  const cat = category(c);
+  return `<article class="camcard">
+    <div class="camtop">
+      <div class="camicon">${icon(c)}</div>
+      <button class="btn-fav ${saved ? 'saved' : ''}" data-save="${escape(c.u)}" aria-label="${saved ? 'Remove saved' : 'Save camera'}">${saved ? '★' : '☆'}</button>
+    </div>
+    <div>
+      <div class="camtitle">${escape(c.n || 'Unnamed camera')}</div>
+      <div class="camloc">${escape(countryName(c.c))}${c.e ? ' · ' + escape(c.e) : ''}</div>
+    </div>
+    <div class="tags">
+      <span class="tag stream">${fmt}</span>
+      <span class="tag">${cat === 'city' ? 'City / general' : cat}</span>
+    </div>
+    <div class="camactions">
+      <button class="watch" data-watch="${escape(c.u)}">▶ Watch</button>
+      <a href="${escape(c.u)}" target="_blank" rel="noopener noreferrer">Source ↗</a>
+    </div>
+  </article>`;
+}
+
+/* ── Filters & render ── */
+function applyFilters() {
+  const q = norm($('camSearch').value);
+  const country = $('countryFilter').value;
+  const type = $('typeFilter').value;
+  const sort = $('sortFilter').value;
+
+  filtered = cameras.filter(c => {
+    const text = norm([c.n, c.c, countryName(c.c), c.e, c.t].join(' '));
+    return (!q || text.includes(q))
+      && (!country || c.c === country)
+      && (!type || c.t === type)
+      && (activeCategory === 'all' || category(c) === activeCategory)
+      && (!savedOnly || isSaved(c));
+  });
+
+  filtered.sort((a, b) => {
+    if (sort === 'country') return countryName(a.c).localeCompare(countryName(b.c));
+    if (sort === 'type') return String(a.t).localeCompare(String(b.t));
+    return String(a.n).localeCompare(String(b.n));
+  });
+
+  visible = PAGE;
+  renderGrid();
+}
+
+function renderGrid() {
+  const shown = filtered.slice(0, visible);
+  $('cameraGrid').innerHTML = shown.length
+    ? shown.map(card).join('')
+    : `<div class="empty">
+        <strong>${savedOnly ? 'No saved cameras yet' : 'No matching cameras found'}</strong>
+        ${savedOnly
+          ? 'Tap ☆ on any camera to keep it here for quick access.'
+          : 'Try a broader search, another category, or the worldwide directories above.'}
+        ${!savedOnly ? '<br><button class="btn primary" id="emptyClear">Clear filters</button>' : ''}
+      </div>`;
+
+  if (!savedOnly && !shown.length) {
+    const btn = document.getElementById('emptyClear');
+    if (btn) btn.onclick = () => { clearAllFilters(); };
+  }
+
+  $('resultsMeta').textContent =
+    `Showing ${shown.length.toLocaleString()} of ${filtered.length.toLocaleString()} matching · ${cameras.length.toLocaleString()} total indexed`;
+  $('loadMore').classList.toggle('hide', visible >= filtered.length);
+}
+
+function render() {
+  applyFilters();
+  $('statSaved').textContent = favs().length;
+}
+
+function setCategory(cat) {
+  activeCategory = cat;
+  savedOnly = false;
+  $('categories').querySelectorAll('[data-cat]').forEach(b =>
+    b.classList.toggle('active', b.dataset.cat === cat));
+  const titles = {
+    all: 'Discover cameras', coastal: 'Coasts & beaches', wildlife: 'Wildlife & nature',
+    traffic: 'Traffic cameras', mountain: 'Mountain views', city: 'City life'
+  };
+  $('resultsTitle').textContent = titles[cat] || 'Discover cameras';
+  $('resultsSub').textContent = cat === 'all'
+    ? 'Browse the catalogue or search for a place or subject.'
+    : `Showing ${cat} cameras from the catalogue.`;
+  render();
+  $('cameraSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function clearAllFilters() {
+  $('camSearch').value = '';
+  $('countryFilter').value = '';
+  $('typeFilter').value = '';
+  $('sortFilter').value = 'name';
+  savedOnly = false;
+  setCategory('all');
+}
+
+/* ── Map ── */
+function initMap() {
+  if (!window.L) {
+    $('map').innerHTML = '<div class="empty">Map library could not load. Camera search still works below.</div>';
+    return;
+  }
+  map = L.map('map', { worldCopyJump: true, scrollWheelZoom: false, zoomControl: true })
+    .setView([20, 0], 2);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap',
+    maxZoom: 18
+  }).addTo(map);
+
+  clusterGroup = L.markerClusterGroup({
+    maxClusterRadius: 48,
+    spiderfyOnMaxZoom: true,
+    showCoverageOnHover: false,
+    chunkedLoading: true,
+    chunkInterval: 50
+  });
+  map.addLayer(clusterGroup);
+  paintMarkers();
+}
+
+function paintMarkers(list = cameras) {
+  if (!clusterGroup) return;
+  clusterGroup.clearLayers();
+  const points = list.filter(c => Number.isFinite(+c.lat) && Number.isFinite(+c.lon));
+  // Cap for performance on huge catalogues
+  let pts = points;
+  if (pts.length > 1200) {
+    const step = Math.ceil(pts.length / 1200);
+    pts = pts.filter((_, i) => i % step === 0);
+  }
+  const markers = pts.map(c => {
+    const m = L.circleMarker([+c.lat, +c.lon], {
+      radius: 5, color: '#4a9eff', fillColor: '#5ba8ff',
+      fillOpacity: 0.85, weight: 1.5
+    });
+    m.bindPopup(
+      `<strong>${escape(c.n)}</strong><br>${escape(countryName(c.c))}<br>
+       <button class="btn primary sm" data-map-watch="${escape(c.u)}" style="margin-top:8px">▶ Watch</button>`,
+      { maxWidth: 240 }
+    );
+    return m;
+  });
+  clusterGroup.addLayers(markers);
+}
+
+function showWorld() {
+  if (map) {
+    map.setView([20, 0], 2);
+    paintMarkers();
+  }
+}
+
+function geolocate() {
+  if (!navigator.geolocation) {
+    toast('Location not available in this browser');
+    return;
+  }
+  toast('Locating…');
+  navigator.geolocation.getCurrentPosition(p => {
+    const lat = p.coords.latitude, lon = p.coords.longitude;
+    if (map) {
+      map.setView([lat, lon], 9);
+      if (homeMarker) map.removeLayer(homeMarker);
+      homeMarker = L.marker([lat, lon]).addTo(map).bindPopup('Your approximate location').openPopup();
+    }
+    const near = cameras
+      .map(c => ({ ...c, d: distance(lat, lon, +c.lat, +c.lon) }))
+      .filter(c => Number.isFinite(c.d))
+      .sort((a, b) => a.d - b.d)
+      .slice(0, 48);
+
+    $('camSearch').value = '';
+    $('countryFilter').value = '';
+    activeCategory = 'all';
+    savedOnly = false;
+    filtered = near;
+    visible = PAGE;
+    $('resultsTitle').textContent = 'Cameras near you';
+    $('resultsSub').textContent = 'Sorted by approximate distance from your location.';
+    $('cameraGrid').innerHTML = near.length
+      ? near.map(c => card(c)).join('')
+      : '<div class="empty"><strong>No indexed cameras nearby</strong>Try the world directories for more coverage.</div>';
+    $('resultsMeta').textContent = `${near.length} indexed cameras nearest your location`;
+    $('loadMore').classList.add('hide');
+    $('cameraSection').scrollIntoView({ behavior: 'smooth' });
+    toast(`${near.length} cameras nearby`);
+  }, () => toast('Could not access location — check browser permission'), {
+    timeout: 12000, maximumAge: 300000
+  });
+}
+
+/* ── Search ── */
+async function searchGlobal(q) {
+  $('camSearch').value = q;
+  $('countryFilter').value = '';
+  activeCategory = 'all';
+  savedOnly = false;
+  $('categories').querySelectorAll('[data-cat]').forEach(b =>
+    b.classList.toggle('active', b.dataset.cat === 'all'));
+  render();
+  $('resultsTitle').textContent = 'Search results';
+  $('resultsSub').textContent = `Matching “${q}” across names, countries and categories.`;
+
+  if (filtered.length) {
+    const c = filtered[0];
+    if (map && Number.isFinite(+c.lat) && Number.isFinite(+c.lon)) {
+      map.setView([+c.lat, +c.lon], Math.max(map.getZoom(), 6));
+    }
+  } else {
+    try {
+      const r = await fetch(
+        'https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(q),
+        { headers: { Accept: 'application/json' } }
+      );
+      if (r.ok) {
+        const d = await r.json();
+        if (d[0] && map) {
+          map.setView([+d[0].lat, +d[0].lon], 9);
+          $('resultsSub').textContent =
+            `No direct catalogue matches. Map centred on ${d[0].display_name}. Try the global directories.`;
+        }
+      }
+    } catch {}
+  }
+
+  const enc = encodeURIComponent(q);
+  const dyn = [
+    ['YouTube live webcams for “' + q + '”',
+      'https://www.youtube.com/results?search_query=' + enc + '+live+webcam',
+      'Public live broadcasts for this place'],
+    ['YouTube live cameras for “' + q + '”',
+      'https://www.youtube.com/results?search_query=' + enc + '+live+camera',
+      'Alternative live camera search'],
+    ['Windy webcam map', 'https://www.windy.com/webcams', 'Browse with weather context']
+  ];
+  $('directories').innerHTML =
+    dirs.map(d =>
+      `<a class="directory" href="${d[1]}" target="_blank" rel="noopener noreferrer">
+        <span><strong>${d[0]}</strong><small>${d[2]}</small></span><span class="arrow">↗</span>
+      </a>`
+    ).join('') +
+    dyn.map(d =>
+      `<a class="directory" href="${d[1]}" target="_blank" rel="noopener noreferrer">
+        <span><strong>${escape(d[0])}</strong><small>${escape(d[2])}</small></span><span class="arrow">↗</span>
+      </a>`
+    ).join('');
+
+  $('cameraSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/* ── Player ── */
+function playerOpen(url) {
+  const c = cameras.find(x => x.u === url) || favs().find(x => x.u === url) ||
+    { n: 'Public camera', u: url, t: url.includes('youtube') || url.includes('youtu.be') ? 'youtube' : /\.m3u8/i.test(url) ? 'hls' : 'page' };
+
+  $('playerTitle').textContent = c.n || 'Camera player';
+  $('player').innerHTML = '';
+  $('playerNote').innerHTML = '';
+  $('playerActions').innerHTML = '';
+  $('playerModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  let yt = null;
+  try {
+    const u = new URL(url);
+    if (u.hostname.includes('youtu.be')) yt = u.pathname.slice(1).split('?')[0];
+    else if (u.hostname.includes('youtube.com')) {
+      yt = u.searchParams.get('v') || (u.pathname.match(/\/embed\/([^/]+)/) || [])[1] || null;
+    }
+  } catch {}
+
+  if (yt) {
+    const frame = document.createElement('iframe');
+    frame.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(yt) + '?autoplay=1&rel=0';
+    frame.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+    frame.allowFullscreen = true;
+    frame.title = c.n || 'YouTube stream';
+    $('player').append(frame);
+    $('playerNote').textContent = 'Playback provided by YouTube. If unavailable, open the source page.';
+  } else if (/\.m3u8(?:$|\?)/i.test(url)) {
+    const v = document.createElement('video');
+    v.controls = true;
+    v.autoplay = true;
+    v.playsInline = true;
+    v.setAttribute('playsinline', '');
+    v.setAttribute('webkit-playsinline', '');
+    $('player').append(v);
+
+    if (v.canPlayType('application/vnd.apple.mpegurl')) {
+      v.src = url;
+      v.play().catch(() => {});
+    } else if (window.Hls && Hls.isSupported()) {
+      const h = new Hls({ enableWorker: true, lowLatencyMode: false });
+      h.loadSource(url);
+      h.attachMedia(v);
+      h.on(Hls.Events.ERROR, (_, data) => {
+        if (data.fatal) {
+          $('playerNote').innerHTML =
+            'This source may block embedding or be offline. <a href="' + escape(url) +
+            '" target="_blank" rel="noopener">Open original stream ↗</a>';
+        }
+      });
+    } else {
+      $('player').innerHTML = '<div class="playernote">This browser cannot play HLS streams natively.</div>';
+    }
+    $('playerNote').innerHTML =
+      'If playback fails, the provider may restrict embedding. <a href="' + escape(url) +
+      '" target="_blank" rel="noopener">Open original source ↗</a>';
+  } else {
+    $('player').innerHTML =
+      `<div style="text-align:center;padding:28px 20px;color:var(--muted)">
+        This entry is a webpage rather than a direct stream.<br><br>
+        <a class="btn primary" href="${escape(url)}" target="_blank" rel="noopener"
+           style="display:inline-flex;text-decoration:none">Open camera website ↗</a>
+      </div>`;
+    $('playerNote').textContent = 'External sites may restrict embedding. Opening the source is the reliable fallback.';
+  }
+
+  // Actions
+  const acts = [];
+  acts.push(`<a class="btn sm" href="${escape(url)}" target="_blank" rel="noopener">Source ↗</a>`);
+  if (isSaved(c) || cameras.find(x => x.u === url)) {
+    acts.push(`<button class="btn sm" id="modalSave">${isSaved(c) ? '★ Saved' : '☆ Save'}</button>`);
+  }
+  acts.push(`<button class="btn sm" id="modalShare">Share</button>`);
+  $('playerActions').innerHTML = acts.join('');
+
+  const saveBtn = document.getElementById('modalSave');
+  if (saveBtn) {
+    saveBtn.onclick = () => {
+      const cam = cameras.find(x => x.u === url) || favs().find(x => x.u === url) || c;
+      toggleSaved(cam);
+      saveBtn.textContent = isSaved(cam) ? '★ Saved' : '☆ Save';
+    };
+  }
+  const shareBtn = document.getElementById('modalShare');
+  if (shareBtn) {
+    shareBtn.onclick = async () => {
+      const shareData = { title: c.n || "World's Eye camera", url: url, text: 'Watch this live camera on World\'s Eye' };
+      try {
+        if (navigator.share) await navigator.share(shareData);
+        else {
+          await navigator.clipboard.writeText(url);
+          toast('Link copied');
+        }
+      } catch {
+        try { await navigator.clipboard.writeText(url); toast('Link copied'); } catch {}
+      }
+    };
+  }
+}
+
+function playerClose() {
+  $('playerModal').classList.remove('open');
+  $('player').querySelectorAll('video,iframe').forEach(x => {
+    try { x.pause?.(); x.src = 'about:blank'; } catch {}
+  });
+  $('player').innerHTML = '';
+  document.body.style.overflow = '';
+}
+
+/* ── Random ── */
+function randomCamera() {
+  if (!cameras.length) return;
+  const pool = filtered.length ? filtered : cameras;
+  const c = pool[Math.floor(Math.random() * pool.length)];
+  playerOpen(c.u);
+}
+
+/* ── Saved view ── */
+function showSaved() {
+  $('camSearch').value = '';
+  $('countryFilter').value = '';
+  $('typeFilter').value = '';
+  savedOnly = true;
+  activeCategory = 'all';
+  $('categories').querySelectorAll('[data-cat]').forEach(b =>
+    b.classList.toggle('active', b.dataset.cat === 'all'));
+  $('resultsTitle').textContent = 'Your saved cameras';
+  $('resultsSub').textContent = 'Personal collection stored on this device.';
+  render();
+  $('cameraSection').scrollIntoView({ behavior: 'smooth' });
+}
+
+/* ── Events ── */
+$('globalSearch').addEventListener('submit', e => {
+  e.preventDefault();
+  const q = $('globalQ').value.trim();
+  if (q) searchGlobal(q);
+});
+
+let searchTimer;
+$('camSearch').addEventListener('input', () => {
+  savedOnly = false;
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(render, 180);
+});
+$('countryFilter').addEventListener('change', render);
+$('typeFilter').addEventListener('change', render);
+$('sortFilter').addEventListener('change', render);
+$('clearFilters').addEventListener('click', clearAllFilters);
+$('categories').addEventListener('click', e => {
+  const b = e.target.closest('[data-cat]');
+  if (b) setCategory(b.dataset.cat);
+});
+
+$('map').addEventListener('click', e => {
+  const b = e.target.closest('[data-map-watch]');
+  if (b) playerOpen(b.dataset.mapWatch);
+});
+$('cameraGrid').addEventListener('click', e => {
+  const s = e.target.closest('[data-save]');
+  const w = e.target.closest('[data-watch]');
+  if (s) {
+    const c = cameras.find(x => x.u === s.dataset.save) || favs().find(x => x.u === s.dataset.save);
+    if (c) toggleSaved(c);
+  }
+  if (w) playerOpen(w.dataset.watch);
+});
+
+$('loadMore').addEventListener('click', () => {
+  visible += PAGE;
+  renderGrid();
+});
+$('geoBtn').addEventListener('click', geolocate);
+$('mapNear').addEventListener('click', geolocate);
+$('mapAll').addEventListener('click', showWorld);
+$('resetMap').addEventListener('click', showWorld);
+$('worldBtn').addEventListener('click', () => {
+  $('mapPanel').scrollIntoView({ behavior: 'smooth' });
+  showWorld();
+});
+$('exploreBtn').addEventListener('click', () =>
+  $('cameraSection').scrollIntoView({ behavior: 'smooth' }));
+$('randomBtn').addEventListener('click', randomCamera);
+$('randomBtn2').addEventListener('click', randomCamera);
+$('headerFav').addEventListener('click', showSaved);
+$('navSaved').addEventListener('click', showSaved);
+$('closePlayer').addEventListener('click', playerClose);
+$('playerModal').addEventListener('click', e => {
+  if (e.target === $('playerModal')) playerClose();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') playerClose();
+});
+
+document.querySelectorAll('[data-scroll]').forEach(b =>
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.navbtn').forEach(x => x.classList.toggle('active', x === b));
+    const el = $(b.dataset.scroll);
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  }));
+
+/* ── Boot ── */
+fetch('./cameras.json')
+  .then(r => {
+    if (!r.ok) throw new Error('Catalogue request failed');
+    return r.json();
+  })
+  .then(data => {
+    cameras = Array.isArray(data)
+      ? data.filter(c => c && c.u && Number.isFinite(+c.lat) && Number.isFinite(+c.lon))
+      : [];
+
+    const countries = [...new Set(cameras.map(c => c.c).filter(Boolean))]
+      .sort((a, b) => countryName(a).localeCompare(countryName(b)));
+    $('countryFilter').insertAdjacentHTML('beforeend',
+      countries.map(c => `<option value="${escape(c)}">${escape(countryName(c))}</option>`).join(''));
+
+    $('statCams').textContent = cameras.length.toLocaleString();
+    $('statCountries').textContent = countries.length.toLocaleString();
+    $('statTypes').textContent = new Set(cameras.map(c => c.t)).size.toString();
+    $('statSaved').textContent = favs().length;
+
+    initMap();
+    render();
+    $('resultsSub').textContent =
+      'Search the bundled catalogue, then explore external networks for even more coverage.';
+  })
+  .catch(err => {
+    $('statCams').textContent = '—';
+    $('statCountries').textContent = '—';
+    $('resultsMeta').textContent =
+      'Could not load cameras.json. Ensure it sits beside index.html in the repository root.';
+    $('cameraGrid').innerHTML =
+      '<div class="empty"><strong>Camera catalogue could not load</strong>Check that cameras.json was uploaded next to index.html.</div>';
+    initMap();
+    console.error(err);
+  });
+
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  addEventListener('load', () =>
+    navigator.serviceWorker.register('./sw.js').catch(() => {}));
+}
 })();
-</script></body></html>
+</script>
+</body>
+</html>
